@@ -44,6 +44,7 @@ interface TerminalEntityProps {
   onResizeEnd?: (width: number, height: number) => void;
   onBringToFront?: () => void;
   onProcessChange?: (processLabel: string | null) => void;
+  onSnapBack?: () => void;
   forcedBounds?: { x: number; y: number; width: number; height: number };
   lockedToLayout?: boolean;
 }
@@ -69,6 +70,7 @@ function TerminalEntity({
   onResizeEnd,
   onBringToFront,
   onProcessChange,
+  onSnapBack,
   forcedBounds,
   lockedToLayout = false,
 }: TerminalEntityProps) {
@@ -667,7 +669,13 @@ function TerminalEntity({
   const handleTitlebarMouseDown = useCallback(
     (e: React.MouseEvent) => {
       if (e.button !== 0) return;
-      e.preventDefault();
+
+      if (e.detail === 2 && onSnapBack) {
+        onSnapBack();
+        return;
+      }
+
+      // e.preventDefault(); // Removed to ensure browser double-click detection works reliably
       onSelect?.();
       bringToFront();
       startDrag(e);

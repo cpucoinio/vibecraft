@@ -6,6 +6,7 @@ import { detachAgentsForFolder } from './services/workspace';
 import { processManager } from './services/agents/processManager';
 import * as workspace from './services/workspace';
 import * as browser from './services/browser';
+import { getMemflowStatus } from './services/memflowBridge';
 import type {
   Agent,
   AgentModelInfo,
@@ -39,7 +40,7 @@ import { getProviderRegistry, PROVIDER_REGISTRY_CACHE_TTL_MS } from './services/
 import type { ProviderRegistrySnapshot } from './services/agentConnect/providerRegistry';
 import { createAgentConnectService } from './services/agentConnect/service';
 import { createAgentConnectRunner } from './services/agentConnect/runner';
-import { ensureProviderInstalled, loginProvider } from './services/agentConnect/embeddedHost';
+import { ensureProviderInstalled, loginProvider, logoutProvider } from './services/agentConnect/embeddedHost';
 import { listMcpSkills, validateUnitMcpSkills } from './services/mcpSkills';
 import { createAgentCompletionNotifications } from './services/notifications/agentCompletionNotifications';
 import { isNotificationsEnabled, setNotificationsEnabled } from './services/notifications/notificationGate';
@@ -604,11 +605,30 @@ export async function registerIpcHandlers(): Promise<void> {
 
   ipcMain.handle(
     'agentconnect-provider-login',
-    async (_event, provider: unknown): Promise<IpcResult<{ loggedIn: boolean }>> => {
-      const validated = validate(AgentConnectProviderLoginSchema, { provider });
+    async (_event, provider: unknown, options?: unknown): Promise<IpcResult<{ loggedIn: boolean }>> => {
+      const validated = validate(AgentConnectProviderLoginSchema, { provider, options });
       if (!validated.success) return validated;
 
-      return handleIpc(() => loginProvider(validated.data.provider));
+      return handleIpc(async () => {
+        const result = await loginProvider(validated.data.provider, validated.data.options);
+        // Force-refresh provider status so the UI updates after login
+        await getProviderRegistry().refreshProviderStatus(validated.data.provider, { force: true });
+        return result;
+      });
+    }
+  );
+
+  ipcMain.handle(
+    'agentconnect-provider-logout',
+    async (_event, provider: unknown): Promise<IpcResult<void>> => {
+      const validated = validate(AgentConnectProviderStatusSchema, { provider });
+      if (!validated.success) return validated;
+
+      return handleIpc(async () => {
+        await logoutProvider(validated.data.provider);
+        // Force-refresh so the UI reflects the disconnected state immediately
+        await getProviderRegistry().refreshProviderStatus(validated.data.provider, { force: true });
+      });
     }
   );
 
@@ -2289,6 +2309,19 @@ export async function registerIpcHandlers(): Promise<void> {
     return handleIpc(() => {
       const mainWindow = BrowserWindow.getAllWindows().find((win) => !win.isDestroyed());
       return mainWindow?.id ?? null;
+    });
+  });
+
+  // Memflow / Maitrix Link
+  ipcMain.handle('memflow-status', async (): Promise<IpcResult<ReturnType<typeof getMemflowStatus>>> => {
+    return handleIpc(() => getMemflowStatus());
+  });
+
+  ipcMain.handle('memflow-open-link', async (): Promise<IpcResult<{ success: boolean }>> => {
+    return handleIpc(async () => {
+      const maitrixUrl = 'https://link.maitrix.app';
+      await shell.openExternal(maitrixUrl);
+      return { success: true };
     });
   });
 }
