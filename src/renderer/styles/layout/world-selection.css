@@ -479,7 +479,9 @@
   font-weight: 700;
   padding: 8px 12px;
   cursor: pointer;
-  transition: border-color 0.2s ease, transform 0.2s ease;
+  transition:
+    border-color 0.2s ease,
+    transform 0.2s ease;
 }
 
 .world-import-toggle-btn:hover {

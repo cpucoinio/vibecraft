@@ -289,7 +289,8 @@ describe('agent settings connection pipeline', () => {
           provider: { id: 'codex', name: 'Codex', installed: true, loggedIn: true },
         });
 
-      const { ensureProviderInstalled } = await import('../../../src/main/services/agentConnect/embeddedHost');
+      const { ensureProviderInstalled } =
+        await import('../../../src/main/services/agentConnect/embeddedHost');
       const status = await ensureProviderInstalled('codex');
 
       expect(requestMock).toHaveBeenCalledWith('acp.providers.ensureInstalled', { provider: 'codex' });
@@ -304,7 +305,8 @@ describe('agent settings connection pipeline', () => {
           provider: { id: 'claude', name: 'Claude', installed: true, loggedIn: false },
         });
 
-      const { ensureProviderInstalled } = await import('../../../src/main/services/agentConnect/embeddedHost');
+      const { ensureProviderInstalled } =
+        await import('../../../src/main/services/agentConnect/embeddedHost');
       const status = await ensureProviderInstalled('claude');
 
       expect(status.state).toBe('error');
@@ -394,9 +396,8 @@ describe('agent settings connection pipeline', () => {
 
   describe('providerRegistry integration', () => {
     test('refresh populates status for all providers including google', async () => {
-      const { createProviderRegistry } = await import(
-        '../../../src/main/services/agentConnect/providerRegistry'
-      );
+      const { createProviderRegistry } =
+        await import('../../../src/main/services/agentConnect/providerRegistry');
 
       const statusMock = vi.fn().mockImplementation(async (id: string) => ({
         providerId: id,
@@ -433,9 +434,8 @@ describe('agent settings connection pipeline', () => {
     });
 
     test('refreshProviderStatus updates snapshot for a single provider', async () => {
-      const { createProviderRegistry } = await import(
-        '../../../src/main/services/agentConnect/providerRegistry'
-      );
+      const { createProviderRegistry } =
+        await import('../../../src/main/services/agentConnect/providerRegistry');
 
       let callCount = 0;
       const statusMock = vi.fn().mockImplementation(async (id: string) => {
@@ -490,9 +490,8 @@ describe('agent settings connection pipeline', () => {
           provider: { id: 'cursor', name: 'Cursor', installed: true, loggedIn: true },
         });
 
-      const { loginProvider, getProviderStatus } = await import(
-        '../../../src/main/services/agentConnect/embeddedHost'
-      );
+      const { loginProvider, getProviderStatus } =
+        await import('../../../src/main/services/agentConnect/embeddedHost');
 
       const loginResult = await loginProvider('cursor', { method: 'console' });
       expect(loginResult.loggedIn).toBe(true);
@@ -517,9 +516,8 @@ describe('agent settings connection pipeline', () => {
           },
         });
 
-      const { loginProvider, getProviderStatus } = await import(
-        '../../../src/main/services/agentConnect/embeddedHost'
-      );
+      const { loginProvider, getProviderStatus } =
+        await import('../../../src/main/services/agentConnect/embeddedHost');
 
       await loginProvider('codex', { method: 'api_key', apiKey: 'sk-test-key' });
 
@@ -554,9 +552,8 @@ describe('agent settings connection pipeline', () => {
           provider: { id: 'cursor', name: 'Cursor', installed: true, loggedIn: true },
         });
 
-      const { ensureProviderInstalled, loginProvider, getProviderStatus } = await import(
-        '../../../src/main/services/agentConnect/embeddedHost'
-      );
+      const { ensureProviderInstalled, loginProvider, getProviderStatus } =
+        await import('../../../src/main/services/agentConnect/embeddedHost');
 
       // Step 1: Install
       const installStatus = await ensureProviderInstalled('cursor');
@@ -656,14 +653,12 @@ describe('agent settings connection pipeline', () => {
         message: 'Login required',
       });
 
-      const { ensureProviderInstalled } = await import('../../../src/main/services/agentConnect/embeddedHost');
+      const { ensureProviderInstalled } =
+        await import('../../../src/main/services/agentConnect/embeddedHost');
       const status = await ensureProviderInstalled('google');
 
       expect(status.state).toBe('error');
-      expect(requestMock).not.toHaveBeenCalledWith(
-        'acp.providers.ensureInstalled',
-        expect.anything()
-      );
+      expect(requestMock).not.toHaveBeenCalledWith('acp.providers.ensureInstalled', expect.anything());
     });
 
     test('Google models come from static list, not the bridge', async () => {

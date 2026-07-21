@@ -489,7 +489,7 @@ export function useAgentManager({
     if (agentsToFix.length === 0) return;
 
     const foldersById = new Map(folders.map((f) => [f.id, f]));
-    const updates: AgentPositionUpdate[] = [];
+    const updates: Array<{ id: string; attachedFolderId: string }> = [];
 
     agentsToFix.forEach((agent) => {
       const nearest = findNearestFolderInGravity({ x: agent.x, y: agent.y }, folders);
@@ -503,7 +503,7 @@ export function useAgentManager({
       agents.map((agent) => {
         const update = updates.find((u) => u.id === agent.id);
         if (!update) return agent;
-        const folder = foldersById.get(update.attachedFolderId!);
+        const folder = foldersById.get(update.attachedFolderId);
         if (!folder || !Number.isFinite(agent.x) || !Number.isFinite(agent.y)) {
           return { ...agent, attachedFolderId: update.attachedFolderId };
         }
@@ -516,15 +516,32 @@ export function useAgentManager({
           attachedFolderId: update.attachedFolderId,
           x: slot?.position.x ?? agent.x,
           y: slot?.position.y ?? agent.y,
-          status: agent.status === 'offline' ? 'idle' : agent.status,
+          status: agent.status === 'offline' ? 'online' : agent.status,
         };
       })
     );
 
     setAgents(nextAgents);
-    if (typeof workspaceClient.updateAgents === 'function') {
-      void workspaceClient.updateAgents(currentWorkspacePath, updates).catch(() => {});
-    }
+
+    const repairPromises = updates.map(async (update) => {
+      const agent = nextAgents.find((a) => a.id === update.id);
+      if (!agent) return;
+      if (Number.isFinite(agent.x) && Number.isFinite(agent.y)) {
+        await workspaceClient.updateAgentPosition(currentWorkspacePath, agent.id, agent.x, agent.y);
+      }
+      const folder = foldersById.get(update.attachedFolderId);
+      if (folder) {
+        await workspaceClient.agentAttachToFolder({
+          workspacePath: currentWorkspacePath,
+          agentId: agent.id,
+          folderId: folder.id,
+          relativePath: folder.relativePath,
+        });
+      }
+    });
+    void Promise.all(repairPromises).catch((err) => {
+      console.error('Failed to persist auto-repaired agent attachments:', err);
+    });
   }, [agents, folders, setAgents, workspacePath]);
 
   const clearAgentTerminalState = async (agentId: string) => {

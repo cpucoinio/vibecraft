@@ -10,6 +10,7 @@ import { app } from 'electron';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
+import { execFileSync } from 'node:child_process';
 import { logger } from '../../logger';
 import type {
   AgentModelInfo,
@@ -67,7 +68,6 @@ const PROVIDER_ENV_KEYS = [
 const loadShellEnv = (): Record<string, string> => {
   try {
     const shell = process.env.SHELL || '/bin/zsh';
-    const { execFileSync } = require('child_process');
     const output = execFileSync(shell, ['-ilc', 'env'], {
       encoding: 'utf8',
       timeout: 5_000,
@@ -244,7 +244,9 @@ const PROVIDER_FALLBACK_NAMES: Record<string, string> = {
 
 export const listProviders = async (): Promise<ProviderDescriptor[]> => {
   const response = await request<{ providers?: ProviderInfo[] }>('acp.providers.list');
-  const hostProviders = (response.providers ?? []).filter((provider) => isSupportedAgentProvider(provider.id));
+  const hostProviders = (response.providers ?? []).filter((provider) =>
+    isSupportedAgentProvider(provider.id)
+  );
   const hostMap = new Map<string, ProviderInfo>(hostProviders.map((p) => [p.id, p]));
 
   // Ensure every SUPPORTED_AGENT_PROVIDERS entry appears, even if the host bridge didn't return it

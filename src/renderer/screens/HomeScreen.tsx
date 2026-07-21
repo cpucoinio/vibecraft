@@ -344,7 +344,11 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
             </div>
           </button>
           {!hasTutorialResume && (
-            <button className="menu-button secondary" onClick={onOpenTutorial} data-testid="home-open-tutorial">
+            <button
+              className="menu-button secondary"
+              onClick={onOpenTutorial}
+              data-testid="home-open-tutorial"
+            >
               <div className="button-icon">🎓</div>
               <div className="button-text">
                 <span className="button-label">Start Tutorial</span>

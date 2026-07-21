@@ -294,7 +294,9 @@ export function useMovementController({
       if (!(window as any).TEST_LOGS) (window as any).TEST_LOGS = [];
       const log = (msg: string) => (window as any).TEST_LOGS.push(msg);
 
-      log(`handleCanvasRightClick start. position=${position.x},${position.y} target=${JSON.stringify(target)} selectedAgentIds=${selectedAgentIds.length} agents=${agents.length} folders=${folders.length}`);
+      log(
+        `handleCanvasRightClick start. position=${position.x},${position.y} target=${JSON.stringify(target)} selectedAgentIds=${selectedAgentIds.length} agents=${agents.length} folders=${folders.length}`
+      );
 
       if (selectedAgents.length === 0 && !selectedHero) {
         log('handleCanvasRightClick abort: no agents or hero');
@@ -355,7 +357,9 @@ export function useMovementController({
                 now,
                 targetFolder?.id
               );
-              log(`Agent ${agent.id} intent=${intent.intentType} targetId=${intent.targetId} dur=${intent.duration}`);
+              log(
+                `Agent ${agent.id} intent=${intent.intentType} targetId=${intent.targetId} dur=${intent.duration}`
+              );
               movementGroupByUnitRef.current.set(agent.id, groupId);
               void workspaceClient.setAgentMovementIntent(workspacePath, agent.id, intent);
               return {

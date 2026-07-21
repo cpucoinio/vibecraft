@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
+import * as osActual from 'node:os';
 
 let tempDir = '';
 
@@ -27,12 +28,10 @@ import {
   startMemflowBridge,
   stopMemflowBridge,
   notifyWorkspaceActive,
-  notifyWorkspaceClosed,
 } from '../../../src/main/services/memflowBridge';
 
 describe('MemflowBridge', () => {
   beforeEach(() => {
-    const osActual = require('os');
     tempDir = fs.mkdtempSync(path.join(osActual.tmpdir(), 'vibecraft-memflow-'));
     fs.mkdirSync(path.join(tempDir, '.memflow'), { recursive: true });
   });
@@ -54,16 +53,12 @@ describe('MemflowBridge', () => {
     expect(isDaemonRunning()).toBe(false);
 
     // Mock process.kill to return true for process.kill(12345, 0)
-    const killSpy = vi.spyOn(process, 'kill').mockImplementation((pid, signal) => {
+    vi.spyOn(process, 'kill').mockImplementation((pid, signal) => {
       if (pid === 12345 && signal === 0) return true;
       throw new Error('Not running');
     });
 
-    fs.writeFileSync(
-      statusPath,
-      JSON.stringify({ pid: 12345, updatedAt: new Date().toISOString() }),
-      'utf8'
-    );
+    fs.writeFileSync(statusPath, JSON.stringify({ pid: 12345, updatedAt: new Date().toISOString() }), 'utf8');
     expect(isDaemonRunning()).toBe(true);
 
     // If updatedAt is old, it should return false

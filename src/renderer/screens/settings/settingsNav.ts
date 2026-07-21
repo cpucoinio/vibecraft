@@ -1,4 +1,11 @@
-export const SETTINGS_SECTIONS = ['projects', 'agents', 'sound-pack', 'theme', 'billing', 'maitrix-link'] as const;
+export const SETTINGS_SECTIONS = [
+  'projects',
+  'agents',
+  'sound-pack',
+  'theme',
+  'billing',
+  'maitrix-link',
+] as const;
 export type SettingsSection = (typeof SETTINGS_SECTIONS)[number];
 
 export interface SettingsSectionConfig {

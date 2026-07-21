@@ -112,7 +112,9 @@ export default function AgentsSection() {
     const unsubscribe = window.electronAPI.onAgentConnectProvidersUpdated((newSnapshot) => {
       setSnapshot(newSnapshot);
     });
-    return () => { unsubscribe(); };
+    return () => {
+      unsubscribe();
+    };
   }, [loadStatus]);
 
   const handleLogin = async (provider: AgentProvider, options?: Record<string, unknown>) => {
@@ -225,7 +227,10 @@ export default function AgentsSection() {
                     <div className="agent-provider-name">
                       {label}
                       {isAggregator && (
-                        <span className="agent-provider-type-badge" title="Connects to multiple model providers">
+                        <span
+                          className="agent-provider-type-badge"
+                          title="Connects to multiple model providers"
+                        >
                           Aggregator
                         </span>
                       )}
@@ -252,14 +257,11 @@ export default function AgentsSection() {
                 )}
               </div>
 
-
               {/* ── Connection method display (when connected) ───── */}
               {isReady && connMethod && (
                 <div className="agent-connection-method">
                   <div className={`connection-method-indicator connection-method--${connMethod}`}>
-                    <span className="connection-method-icon">
-                      {connMethod === 'api_key' ? '🔑' : '🌐'}
-                    </span>
+                    <span className="connection-method-icon">{connMethod === 'api_key' ? '🔑' : '🌐'}</span>
                     <div className="connection-method-info">
                       <span className="connection-method-label">
                         {connMethod === 'api_key' ? 'API Key' : 'Console Subscription'}
@@ -297,23 +299,21 @@ export default function AgentsSection() {
                         onClick={() => void handleLogin(providerId as AgentProvider, { method: 'console' })}
                         disabled={!!actionPendingProvider}
                       >
-                        <span className="auth-method-card-icon">
-                          {providerId === 'google' ? '🔵' : '🌐'}
-                        </span>
+                        <span className="auth-method-card-icon">{providerId === 'google' ? '🔵' : '🌐'}</span>
                         <div className="auth-method-card-body">
                           <span className="auth-method-card-title">
                             {isAggregator
                               ? `Login to ${label}`
                               : providerId === 'google'
-                              ? 'Sign in with Google'
-                              : 'Console Login'}
+                                ? 'Sign in with Google'
+                                : 'Console Login'}
                           </span>
                           <span className="auth-method-card-desc">
                             {isAggregator
                               ? `Use your ${label} subscription`
                               : providerId === 'google'
-                              ? 'OAuth via your Google account — opens browser'
-                              : 'Sign in via browser — uses your subscription plan'}
+                                ? 'OAuth via your Google account — opens browser'
+                                : 'Sign in via browser — uses your subscription plan'}
                           </span>
                         </div>
                         {connMethod === 'console' && <span className="auth-method-active-mark">●</span>}
@@ -343,9 +343,7 @@ export default function AgentsSection() {
                   {(showApiKeyInput || autoExpandApiKey) && (
                     <div className="provider-extra-config api-key-config">
                       <div className="config-field">
-                        <label htmlFor={`${providerId}-api-key`}>
-                          {PROVIDER_LABELS[providerId]} API Key
-                        </label>
+                        <label htmlFor={`${providerId}-api-key`}>{PROVIDER_LABELS[providerId]} API Key</label>
                         <div className="config-input-group">
                           <input
                             id={`${providerId}-api-key`}

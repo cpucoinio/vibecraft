@@ -57,7 +57,12 @@ const electronAPI: ElectronAPI = {
   importCustomSound: asyncValue(null),
   startMcpServer: asyncValue({ success: false, error: 'Not mocked' }),
   stopMcpServer: asyncValue({ success: true }),
-  memflowStatus: asyncValue({ installed: false, daemonRunning: false, trackedProjectCount: 0, lastSyncedAt: null }),
+  memflowStatus: asyncValue({
+    installed: false,
+    daemonRunning: false,
+    trackedProjectCount: 0,
+    lastSyncedAt: null,
+  }),
   memflowOpenLink: asyncValue({ success: true }),
   loadFolders: asyncValue([]),
   createFolder: asyncValue({ success: false, error: 'Not mocked' }),

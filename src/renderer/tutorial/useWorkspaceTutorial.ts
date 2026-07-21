@@ -1551,9 +1551,11 @@ export const useWorkspaceTutorialCore = ({
       folder.x + size <= tutorialMoveZone.x + tutorialMoveZone.width &&
       folder.y >= tutorialMoveZone.y &&
       folder.y + size <= tutorialMoveZone.y + tutorialMoveZone.height;
-    
+
     if (!(window as any).TEST_LOGS) (window as any).TEST_LOGS = [];
-    (window as any).TEST_LOGS.push(`[TutorialZone] folder=(${folder.x}, ${folder.y}) size=${size} zone=(${tutorialMoveZone.x}, ${tutorialMoveZone.y}) w=${tutorialMoveZone.width} h=${tutorialMoveZone.height} within=${withinZone}`);
+    (window as any).TEST_LOGS.push(
+      `[TutorialZone] folder=(${folder.x}, ${folder.y}) size=${size} zone=(${tutorialMoveZone.x}, ${tutorialMoveZone.y}) w=${tutorialMoveZone.width} h=${tutorialMoveZone.height} within=${withinZone}`
+    );
 
     if (withinZone) {
       updateTutorial({ stepId: 'create-project-2' });

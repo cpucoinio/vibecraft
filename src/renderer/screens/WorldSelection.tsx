@@ -144,7 +144,10 @@ export default function WorldSelection({ onSelect, onBack, tutorialState }: Worl
     [tutorialWorld?.id, tutorialWorld?.path]
   );
 
-  const isInteractive = useCallback((_: Workspace) => true, []);
+  const isInteractive = useCallback((_workspace?: Workspace) => {
+    void _workspace;
+    return true;
+  }, []);
 
   const handlePlayWorld = async (workspace: Workspace) => {
     setSelectedWorkspaceId(workspace.id);

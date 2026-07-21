@@ -51,7 +51,6 @@ logs/
 *~
 
 # Internal-only features (not for prod release)
-src/renderer/assets/icons/maitrix.svg
 docs/internal/
 
 # Local workspace files

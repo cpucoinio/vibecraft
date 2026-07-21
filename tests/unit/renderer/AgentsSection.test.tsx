@@ -327,9 +327,7 @@ describe('AgentsSection', () => {
   // ── Install flow ────────────────────────────────────────────
   describe('install flow', () => {
     test('shows Install button when provider is not installed', async () => {
-      mockedBootstrap.mockResolvedValue(
-        buildSnapshot({ claude: { state: 'missing', installed: false } })
-      );
+      mockedBootstrap.mockResolvedValue(buildSnapshot({ claude: { state: 'missing', installed: false } }));
       render(<AgentsSection />);
 
       await waitFor(() => {
@@ -339,9 +337,7 @@ describe('AgentsSection', () => {
     });
 
     test('clicking Install calls agentConnectProviderInstall', async () => {
-      mockedBootstrap.mockResolvedValue(
-        buildSnapshot({ claude: { state: 'missing', installed: false } })
-      );
+      mockedBootstrap.mockResolvedValue(buildSnapshot({ claude: { state: 'missing', installed: false } }));
       render(<AgentsSection />);
 
       await waitFor(() => {

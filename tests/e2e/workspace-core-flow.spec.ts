@@ -17,19 +17,6 @@ const getFolderIconCenter = async (folder: Locator) => {
   return { x: box.x + box.width / 2, y: box.y + box.height / 2 };
 };
 
-const rightClickCanvasAt = async (page: Page, target: { x: number; y: number }) => {
-  const canvas = page.getByTestId('workspace-canvas');
-  const canvasBox = await canvas.boundingBox();
-  if (!canvasBox) throw new Error('Missing canvas bounds');
-  await canvas.click({
-    button: 'right',
-    position: {
-      x: target.x - canvasBox.x,
-      y: target.y - canvasBox.y,
-    },
-  });
-};
-
 const dragEntityTo = async (page: Page, locator: Locator, target: { x: number; y: number }) => {
   const start = await getCenter(locator);
   await page.mouse.move(start.x, start.y);
@@ -96,7 +83,7 @@ const expectAllAgentsSeparated = async (agents: Locator, minDistance = 16, timeo
 test('workspace core flow persists settings and attachments', async () => {
   const { page, cleanup, paths } = await launchTestApp({ startInWorkspace: true });
   page.setDefaultTimeout(10_000);
-  page.on('console', msg => console.log('PAGE LOG:', msg.text()));
+  page.on('console', (msg) => console.log('PAGE LOG:', msg.text()));
   const settingsPath = path.join(paths.userData, 'settings.json');
   const folder = page.getByTestId('entity-folder').first();
 
@@ -165,17 +152,21 @@ test('workspace core flow persists settings and attachments', async () => {
       await page.mouse.move(folderCenter.x + 600, folderCenter.y + 500);
       await page.mouse.up();
       await expect(page.locator('.agent-entity.selected')).toHaveCount(5, { timeout: 5_000 });
-      const folderEntityCenter = await getCenter(folder);
-      
+
       const folderIcon = folder.locator('.folder-icon');
       const box = await folderIcon.boundingBox();
       if (box) {
         const folderId = await folder.getAttribute('data-entity-id');
-        await page.evaluate(({ id, cx, cy }) => {
-          window.dispatchEvent(new CustomEvent('_test_rightClick', {
-            detail: { position: { x: cx, y: cy }, target: { type: 'folder', id } }
-          }));
-        }, { id: folderId, cx: box.x + box.width / 2, cy: box.y + box.height / 2 });
+        await page.evaluate(
+          ({ id, cx, cy }) => {
+            window.dispatchEvent(
+              new CustomEvent('_test_rightClick', {
+                detail: { position: { x: cx, y: cy }, target: { type: 'folder', id } },
+              })
+            );
+          },
+          { id: folderId, cx: box.x + box.width / 2, cy: box.y + box.height / 2 }
+        );
       }
       try {
         await expect(page.locator('[data-testid="attach-beam"]')).toHaveCount(5, { timeout: 15_000 });

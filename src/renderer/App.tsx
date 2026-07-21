@@ -337,8 +337,7 @@ export default function App() {
     tutorialComplete &&
     !tutorialCompleteVisible;
 
-  const showTourOptIn =
-    tutorialComplete && !tutorialState.tourOptInDismissedAt && !tutorialCompleteVisible;
+  const showTourOptIn = tutorialComplete && !tutorialState.tourOptInDismissedAt && !tutorialCompleteVisible;
 
   return (
     <ThemeProvider initialTheme="default">

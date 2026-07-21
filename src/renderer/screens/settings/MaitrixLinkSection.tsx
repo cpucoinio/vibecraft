@@ -56,11 +56,7 @@ export default function MaitrixLinkSection() {
     }
   };
 
-  const dotState = !status?.installed
-    ? 'inactive'
-    : status.daemonRunning
-      ? 'active'
-      : 'partial';
+  const dotState = !status?.installed ? 'inactive' : status.daemonRunning ? 'active' : 'partial';
 
   const statusLabel = !status?.installed
     ? 'Not installed'
@@ -73,8 +69,8 @@ export default function MaitrixLinkSection() {
       <div className="settings-section-header">
         <h2 className="settings-section-title">Maitrix Link</h2>
         <p className="settings-section-description">
-          When the MemFlow daemon is installed and running, VibeCraft projects appear in the
-          Maitrix Link mobile UI so you can monitor and send prompts from anywhere.
+          When the MemFlow daemon is installed and running, VibeCraft projects appear in the Maitrix Link
+          mobile UI so you can monitor and send prompts from anywhere.
         </p>
       </div>
 

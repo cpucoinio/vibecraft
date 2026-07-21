@@ -515,18 +515,21 @@ export function useProjectMode(options: UseProjectModeOptions): ProjectModeRetur
     setManualLayoutActive(true);
   }, []);
 
-  const clearLayoutOverride = useCallback((id: string) => {
-    setPositionOverrides((prev) => {
-      const next = new Map(prev);
-      const original = computedLayout.get(id);
-      if (original) {
-        next.set(id, { ...original });
-      } else {
-        next.delete(id);
-      }
-      return next;
-    });
-  }, [computedLayout]);
+  const clearLayoutOverride = useCallback(
+    (id: string) => {
+      setPositionOverrides((prev) => {
+        const next = new Map(prev);
+        const original = computedLayout.get(id);
+        if (original) {
+          next.set(id, { ...original });
+        } else {
+          next.delete(id);
+        }
+        return next;
+      });
+    },
+    [computedLayout]
+  );
 
   const clearAllLayoutOverrides = useCallback(() => {
     setPositionOverrides(new Map(computedLayout));
